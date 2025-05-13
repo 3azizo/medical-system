@@ -19,6 +19,13 @@ import { protect } from './middleware/authMiddleware.js';
 app.get('/api/protected', protect, (req, res) => {
   res.json({ msg: `Welcome, your role is: ${req.user.role}` });
 });
+// Test routes
+import testRoutes from './routes/test.js';
+app.use('/api/test', testRoutes);
+// Notification routes
+import notificationRoutes from './routes/notification.js';
+app.use('/api/notification', notificationRoutes);
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
