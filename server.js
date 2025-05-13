@@ -25,6 +25,9 @@ app.use('/api/test', testRoutes);
 // Notification routes
 import notificationRoutes from './routes/notification.js';
 app.use('/api/notification', notificationRoutes);
+// Reservation routes
+import reservationRoutes from './routes/reservation.js';  
+app.use('/api/reservation', reservationRoutes);
 
 
 const PORT = process.env.PORT || 3000;
