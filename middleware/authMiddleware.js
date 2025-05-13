@@ -6,6 +6,9 @@ dotenv.config();
 
 export const protect = (req, res, next) => {
   const authHeader = req.headers.authorization;
+  if (!req.user.isActive) {
+  return res.status(403).json({ msg: 'Account is deactivated' });
+}
 
   if (!authHeader || !authHeader.startsWith('Bearer '))
     return res.status(401).json({ msg: 'No token, authorization denied' });

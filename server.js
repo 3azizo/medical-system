@@ -28,6 +28,9 @@ app.use('/api/notification', notificationRoutes);
 // Reservation routes
 import reservationRoutes from './routes/reservation.js';  
 app.use('/api/reservation', reservationRoutes);
+// Admin routes
+import adminRoutes from './routes/admin.js';
+app.use('/api/admin', adminRoutes);
 
 
 const PORT = process.env.PORT || 3000;

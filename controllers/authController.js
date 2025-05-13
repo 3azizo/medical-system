@@ -62,6 +62,11 @@ export const login = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
+    if (!user.isActive) {
+      return res.status(403).json({ msg: 'Your account is deactivated' });
+    }
+
+    
     if (!user) return res.status(400).json({ msg: 'Invalid email or password' });
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -107,4 +112,7 @@ export const updateProfile = async (req, res) => {
   } catch (err) {
     res.status(500).json({ msg: 'Server Error' });
   }
+};
+export const logout = async (req, res) => {
+  res.status(200).json({ msg: 'Logged out successfully. Remove token client-side.' });
 };

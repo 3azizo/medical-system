@@ -22,6 +22,11 @@ const userSchema = mongoose.Schema(
       enum:["user","admin","medical_lab"],
       default: "user",
     },
+    isActive: {
+  type: Boolean,
+  default: true,
+}
+
   }
 );
 

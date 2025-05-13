@@ -33,3 +33,14 @@ export const getUserResults = async (req, res) => {
     res.status(500).json({ msg: 'Server Error' });
   }
 };
+export const shareResult = async (req, res) => {
+  const result = await MedicalTestResult.findById(req.params.id);
+
+  if (!result || result.user.toString() !== req.user.id)
+    return res.status(403).json({ msg: 'Access denied' });
+
+  result.sharedWith.push(req.body.userId);
+  await result.save();
+
+  res.status(200).json({ msg: 'Shared successfully' });
+};

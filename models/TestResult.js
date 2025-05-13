@@ -21,7 +21,12 @@ const testResultSchema = new mongoose.Schema({
   addedBy: {
     type: mongoose.Schema.Types.ObjectId, // الطبيب أو المستخدم
     ref: 'User',
-  }
+  },
+  sharedWith: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'User'
+}]
+
 });
 const testResult = mongoose.model('TestResult', testResultSchema);
 export default testResult
