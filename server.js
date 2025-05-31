@@ -21,7 +21,7 @@ app.get('/api/protected', protect, (req, res) => {
 });
 // Test routes
 import testRoutes from './routes/test.js';
-app.use('/api/test', testRoutes);
+app.use('/api/results', testRoutes);
 // Notification routes
 import notificationRoutes from './routes/notification.js';
 app.use('/api/notification', notificationRoutes);

@@ -85,7 +85,7 @@ export const login = async (req, res) => {
   }
 };
 export const updateProfile = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password,phone } = req.body;
 
   try {
     const user = await User.findById(req.user.id);
@@ -93,6 +93,9 @@ export const updateProfile = async (req, res) => {
 
     if (name) user.name = name;
     if (email) user.email = email;
+    if (phone) user.phone = phone;
+    // if (location) user.location = location;
+
     if (password) {
       const hashed = await bcrypt.hash(password, 10);
       user.password = hashed;
@@ -106,6 +109,8 @@ export const updateProfile = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        phone:user.phone,
+        // location:user.location,
         role: user.role,
       },
     });

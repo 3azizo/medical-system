@@ -57,7 +57,7 @@ npm start
 - `POST /api/auth/login` – Login and get JWT
 
 ### Profile
-- `PUT /api/profile` – Update user or lab profile
+- `PUT /api/auth/profile` – Update user or lab profile
 
 ### Medical Results
 - `POST /api/results` – Submit blood test
