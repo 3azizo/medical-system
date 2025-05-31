@@ -6,5 +6,5 @@ import { protect } from '../middleware/authMiddleware.js';
 
 router.post('/register', register);
 router.post('/login', login);
-router.put('/profile', protect, updateProfile);
+router.patch('/profile', protect, updateProfile);
 export default router;

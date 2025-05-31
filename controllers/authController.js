@@ -85,37 +85,75 @@ export const login = async (req, res) => {
   }
 };
 export const updateProfile = async (req, res) => {
-  const { name, email, password,phone } = req.body;
+  const { name, email, password, phone, location } = req.body;
 
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ msg: 'User not found' });
 
-    if (name) user.name = name;
-    if (email) user.email = email;
-    if (phone) user.phone = phone;
-    // if (location) user.location = location;
+    // كائن لتتبع الحقول المحدثة
+    const updatedFields = {};
 
-    if (password) {
+    // معالجة كل حقل مع التحقق من وجوده في الطلب
+    if (name !== undefined) {
+      user.name = name;
+      updatedFields.name = name;
+    }
+    
+    if (email !== undefined) {
+      user.email = email;
+      updatedFields.email = email;
+    }
+    
+    if (phone !== undefined) {
+      user.phone = phone;
+      updatedFields.phone = phone;
+    }
+
+    if (location !== undefined) {
+      user.location = location;
+      updatedFields.location = location;
+    }
+
+    if (password !== undefined && password !== '') {
       const hashed = await bcrypt.hash(password, 10);
       user.password = hashed;
+      updatedFields.password = 'updated';
     }
 
     await user.save();
 
-    res.status(200).json({
+    // إعداد الاستجابة
+    const responseData = {
       msg: 'Profile updated successfully',
+      updatedFields: Object.keys(updatedFields),
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        phone:user.phone,
-        // location:user.location,
+        phone: user.phone,
         role: user.role,
-      },
-    });
+      }
+    };
+
+    // إضافة location للاستجابة فقط إذا تم تحديثها أو موجودة أصلاً
+    if (location !== undefined || user.location) {
+      responseData.user.location = user.location;
+    }
+
+    res.status(200).json(responseData);
   } catch (err) {
-    res.status(500).json({ msg: 'Server Error' });
+    console.error('Update profile error:', err);
+    
+    // معالجة أخطاء محددة
+    if (err.code === 11000) {
+      return res.status(400).json({ msg: 'Email or phone already exists' });
+    }
+    
+    res.status(500).json({ 
+      msg: 'Server Error',
+      ...(process.env.NODE_ENV === 'development' && { error: err.message })
+    });
   }
 };
 export const logout = async (req, res) => {
