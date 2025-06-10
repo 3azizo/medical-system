@@ -3,7 +3,7 @@ import Lab from "../models/Lab.js";
 // Get all medical labs
 export const getAllLabs = async (req, res) => {
   try {
-    const labs = await User.find({ role: 'medical_lab' }).select('-password');
+    const labs = await Lab.find().select('-password');
     res.status(200).json(labs);
   } catch (err) {
     res.status(500).json({ msg: 'Server Error' });
