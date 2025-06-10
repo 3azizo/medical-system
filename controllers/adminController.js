@@ -25,8 +25,14 @@ export const addLab =async (req, res) => {
 }
 // Delete a lab (permanent)
 export const deleteLab = async (req, res) => {
+  const { id } = req.params;
+    // Check if the ID is a valid MongoDB ObjectId
+   if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid ID format' });
+    }
+  
   try {
-    const lab = await Lab.findById(req.params.id);
+    const lab = await Lab.findById(id);
     await lab.deleteOne();
     if (!lab) {
       return res.status(404).json({ msg: 'Lab not found' });
@@ -36,22 +42,6 @@ export const deleteLab = async (req, res) => {
     res.status(500).json({ msg: 'Server Error' });
   }
 };
-export const softDeleteLab = async (req, res) => {
-  try {
-    const lab = await User.findById(req.params.id);
-    if (!lab || lab.role !== 'medical_lab') {
-      return res.status(404).json({ msg: 'Lab not found' });
-    }
-
-    lab.isActive = false;
-    await lab.save();
-
-    res.status(200).json({ msg: 'Lab deactivated successfully' });
-  } catch (err) {
-    res.status(500).json({ msg: 'Server Error' });
-  }
-};
-
 // Get all normal users
 export const getAllUsers = async (req, res) => {
   const users = await User.find({ role: 'user' }).select('-password');
