@@ -8,7 +8,20 @@ export const getAllLabs = async (req, res) => {
     res.status(500).json({ msg: 'Server Error' });
   }
 };
+//add a new lab
+export const addLab =async (req, res) => {
+  const { name, address, phone } = req.body;
 
+  if (!name) return res.status(400).json({ error: 'Lab name is required' });
+
+  try {
+    const newLab = new Lab({ name, address, phone });
+    await newLab.save();
+    res.status(201).json({ message: 'Lab created successfully', lab: newLab });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+}
 // Delete a lab (permanent)
 export const deleteLab = async (req, res) => {
   try {

@@ -28,6 +28,9 @@ app.use('/api/notification', notificationRoutes);
 // Reservation routes
 import reservationRoutes from './routes/reservation.js';  
 app.use('/api/reservation', reservationRoutes);
+// Lab routes
+import labRoutes from './routes/labs.js';
+app.use('/api/labs', labRoutes);
 // Admin routes
 import adminRoutes from './routes/admin.js';
 app.use('/api/admin', adminRoutes);
