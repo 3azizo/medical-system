@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Lab from "../models/Lab.js";
 // Get all medical labs
 export const getAllLabs = async (req, res) => {
   try {
