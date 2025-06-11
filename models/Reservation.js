@@ -11,11 +11,19 @@ const reservationSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  testType: {
+     name: {
+      type: String,
+      required: true,
+    },
+  time: {
     type: String,
     required: true,
   },
-  preferredDate: {
+  service: {
+    type: String,
+    required: true,
+  },
+  date: {
     type: Date,
     required: true,
   },

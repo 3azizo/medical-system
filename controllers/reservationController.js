@@ -1,17 +1,17 @@
 import Reservation from "../models/Reservation.js";
 import sendNotification from "../utils/sendNotification.js";
-// const Reservation = require('../models/Reservation');
-// const sendNotification = require('../utils/sendNotification');
 
 export const createReservation = async (req, res) => {
-  const { labId, testType, preferredDate } = req.body;
+  const {name,time, labId, service, date } = req.body;
 
   try {
     const reservation = new Reservation({
       user: req.user.id,
       lab: labId,
-      testType,
-      preferredDate,
+      service,
+      date,
+      name,
+      time,
     });
 
     await reservation.save();
@@ -26,7 +26,17 @@ export const createReservation = async (req, res) => {
     res.status(500).json({ msg: 'Server Error' });
   }
 };
+export const getReservation = async (req, res) => {
+  try {
+    const reservations = await Reservation.find({ user: req.user.id })
+      .populate('lab', 'name address phone email')
+      .sort({ createdAt: -1 });
 
+    res.status(200).json(reservations);
+  } catch (err) {
+    res.status(500).json({ msg: 'Server Error' });
+  }
+}
 export const getLabReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find({ lab: req.user.id })
