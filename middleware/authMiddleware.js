@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
 export const protect = (req, res, next) => {
   const authHeader = req.headers.authorization;
  if (req.user && req.user.isActive === false) {
@@ -31,5 +30,12 @@ export const verifyAdmin= (req, res, next) => {
     next();
   } else {
     return res.status(403).json({ error: 'Access denied. Admins only.' });
+  }
+};
+export const verifyMedical_lab= (req, res, next) => {
+  if (req.user && req.user.role === 'medical_lab') {
+    next();
+  } else {
+    return res.status(403).json({ error: 'Access denied. labs only.' });
   }
 };

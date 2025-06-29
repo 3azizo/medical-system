@@ -6,7 +6,6 @@ export const register = async (req, res) => {
   const { name, email, password, role } = req.body;
 
   try {
-    // التحقق من وجود المستخدم
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ 
@@ -15,10 +14,8 @@ export const register = async (req, res) => {
       });
     }
 
-    // تشفير كلمة المرور
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // إنشاء مستخدم جديد
     const user = new User({
       name,
       email,
@@ -91,10 +88,8 @@ export const updateProfile = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ msg: 'User not found' });
 
-    // كائن لتتبع الحقول المحدثة
     const updatedFields = {};
 
-    // معالجة كل حقل مع التحقق من وجوده في الطلب
     if (name !== undefined) {
       user.name = name;
       updatedFields.name = name;

@@ -19,6 +19,10 @@ import { protect } from './middleware/authMiddleware.js';
 app.get('/api/protected', protect, (req, res) => {
   res.json({ msg: `Welcome, your role is: ${req.user.role}` });
 });
+//records
+import recordsRoute from './routes/records.js';
+app.use("/api/records",recordsRoute);
+
 // Test routes
 import testRoutes from './routes/test.js';
 app.use('/api/results', testRoutes);

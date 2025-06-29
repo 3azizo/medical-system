@@ -11,12 +11,12 @@ export const getAllLabs = async (req, res) => {
 };
 //add a new lab
 export const addLab =async (req, res) => {
-  const { name, address, phone,description } = req.body;
+  const { name, address, phone,description ,imageUrl,openTime,closeTime} = req.body;
 
   if (!name) return res.status(400).json({ error: 'Lab name is required' });
 
   try {
-    const newLab = new Lab({ name, address, phone,description});
+    const newLab = new Lab({ name, address, phone,description,openTime,closeTime,imageUrl});
     await newLab.save();
     res.status(201).json({ message: 'Lab created successfully', lab: newLab });
   } catch (err) {

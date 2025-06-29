@@ -7,6 +7,8 @@ const labSchema = new mongoose.Schema({
   email: String,
   description: String,
   imageUrl: String,
+  openTime:String,
+  closeTime:String,
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
