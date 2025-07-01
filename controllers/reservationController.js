@@ -2,8 +2,10 @@ import Reservation from "../models/Reservation.js";
 import sendNotification from "../utils/sendNotification.js";
 
 export const createReservation = async (req, res) => {
-  const {name,time, labId, service, date } = req.body;
-
+  const {name,time, labId, service, date} = req.body;
+  if (!labId || !date) {
+    return res.status(400).json({ error: 'labId and date are required' });
+  }
   try {
     const reservation = new Reservation({
       user: req.user.id,

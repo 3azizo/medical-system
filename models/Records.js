@@ -32,5 +32,5 @@ const readingSchema = new mongoose.Schema({
   }
 });
 
-const Reading = mongoose.model("Reading", readingSchema);
-export default Reading;
+const Recods = mongoose.model("Recods", readingSchema);
+export default Recods;

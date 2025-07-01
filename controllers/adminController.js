@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import Lab from "../models/Lab.js";
+import bcrypt from "bcryptjs";
 // Get all medical labs
 export const getAllLabs = async (req, res) => {
   try {
@@ -9,18 +10,55 @@ export const getAllLabs = async (req, res) => {
     res.status(500).json({ msg: 'Server Error' });
   }
 };
-//add a new lab
-export const addLab =async (req, res) => {
-  const { name, address, phone,description ,imageUrl,openTime,closeTime} = req.body;
+export const addLab = async (req, res) => {
+  const { name, address, phone } = req.body;
 
-  if (!name) return res.status(400).json({ error: 'Lab name is required' });
+
+  if (!name) {
+    return res.status(400).json({ error: 'name are required' });
+  }
 
   try {
-    const newLab = new Lab({ name, address, phone,description,openTime,closeTime,imageUrl});
-    await newLab.save();
-    res.status(201).json({ message: 'Lab created successfully', lab: newLab });
+    // 1. Create lab account as user with role = 'medical_lab'
+    const email= name.toLowerCase().split(" ").join("").concat("@gmail.com");
+    const password = name.split(" ").join("").concat(Math.floor(Math.random() * 1000).toString());
+    console.log(email, password);
+    
+    const hashedPassword = await bcrypt.hash(password, 10); 
+
+    const labUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'medical_lab',
+      phone,
+      address
+    });
+
+    await labUser.save();
+    console.log('Lab user created:', labUser);
+    const lab = new Lab({
+      name,
+      address,
+      phone,
+      isActive: true,
+      userId: labUser._id 
+      });
+
+    await lab.save();
+
+    return res.status(201).json({
+      message: 'Lab and account created',
+      lab,
+      userAccount: {
+        email: labUser.email,
+        password: '•••••• (saved hashed)',
+        role: labUser.role
+      }
+    });
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    console.error(err);
+    return res.status(500).json({ error: 'Server error' });
   }
 }
 // Delete a lab (permanent)
@@ -29,6 +67,9 @@ export const deleteLab = async (req, res) => {
     // Check if the ID is a valid MongoDB ObjectId
    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: 'Invalid ID format' });
+    }
+     if (lab.userId) {
+      await User.findByIdAndDelete(lab.userId);
     }
   
   try {

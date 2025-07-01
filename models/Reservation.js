@@ -8,7 +8,7 @@ const reservationSchema = new mongoose.Schema({
   },
   lab: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Lab',
     required: true,
   },
      name: {
@@ -32,6 +32,7 @@ const reservationSchema = new mongoose.Schema({
     enum: ['pending', 'accepted', 'rejected'],
     default: 'pending',
   },
+    note: { type: String, default: '' },  
   createdAt: {
     type: Date,
     default: Date.now,
