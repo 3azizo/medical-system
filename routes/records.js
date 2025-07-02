@@ -17,9 +17,9 @@ router.post("/", async (req, res) => {
       time,
       user: req.user.id,
     });
-
     await records.save();
-    res.status(201).json({ message: "Reading saved", data: reading });
+    console.log(records);
+    res.status(201).json({ message: "Reading saved", data: records });
   } catch (err) {
     res.status(500).json({ error: "Server error", details: err.message });
   }
