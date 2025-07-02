@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import Lab from "../models/Lab.js";
 import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 // Get all medical labs
 export const getAllLabs = async (req, res) => {
   try {
@@ -64,23 +65,31 @@ export const addLab = async (req, res) => {
 // Delete a lab (permanent)
 export const deleteLab = async (req, res) => {
   const { id } = req.params;
-    // Check if the ID is a valid MongoDB ObjectId
-   if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: 'Invalid ID format' });
-    }
-    
+
+  // Validate ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
   try {
     const lab = await Lab.findById(id);
-    await lab.deleteOne();
+
     if (!lab) {
-      return res.status(404).json({ msg: 'Lab not found' });
+      return res.status(404).json({ error: 'Lab not found' });
     }
-     if (lab.userId) {
+
+    // Delete associated user if applicable
+    if (lab.userId) {
       await User.findByIdAndDelete(lab.userId);
     }
+
+    // Delete the lab
+    await lab.deleteOne();
+
     res.status(200).json({ msg: 'Lab deleted successfully' });
   } catch (err) {
-    res.status(500).json({ msg: 'Server Error' });
+    console.error('Error deleting lab:', err);
+    res.status(500).json({ error: 'Server Error @3azizo' });
   }
 };
 // Get all normal users
