@@ -22,7 +22,7 @@ const readingSchema = new mongoose.Schema({
     ],
   },
   datetime: {
-    type: Date,
+    type: String,
     required: true,
   },
   user: {
