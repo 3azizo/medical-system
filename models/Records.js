@@ -1,8 +1,6 @@
-
-// models/Reading.js
 import mongoose from "mongoose";
 
-const readingSchema = new mongoose.Schema({
+const recordsSchema = new mongoose.Schema({
   blood_glucose: {
     type: Number,
     required: true,
@@ -34,5 +32,5 @@ const readingSchema = new mongoose.Schema({
   }
 });
 
-const Recods = mongoose.model("Recods", readingSchema);
-export default Recods;
+const Records = mongoose.model("Records", recordsSchema);
+export default Records;
