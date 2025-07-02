@@ -74,3 +74,6 @@ export const updateReservationStatus = async (req, res) => {
     res.status(500).json({ msg: 'Server Error' });
   }
 };
+export const addResultFile= async (req,res)=>{
+  res.status(200).json({ msg: 'implemention soon' });
+}    

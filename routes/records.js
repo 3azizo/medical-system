@@ -3,6 +3,7 @@ import express from "express";
 import Records from "../models/Records.js";
 const router = express.Router();
 
+// 
 router.post("/", async (req, res) => {
   try {
     const { blood_glucose, time_period, date, time, userId } = req.body;
@@ -31,5 +32,19 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const record = await Records.findById(id);
+      if (!record) {
+      return res.status(404).json({ error: 'record not found' });
+    }
+    res.json({ record });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+})
 
 export default router;

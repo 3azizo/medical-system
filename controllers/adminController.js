@@ -89,7 +89,7 @@ export const deleteLab = async (req, res) => {
     res.status(200).json({ msg: 'Lab deleted successfully' });
   } catch (err) {
     console.error('Error deleting lab:', err);
-    res.status(500).json({ error: 'Server Error @3azizo' });
+    res.status(500).json({ error: 'Server Error @' });
   }
 };
 // Get all normal users

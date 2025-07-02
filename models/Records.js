@@ -10,16 +10,16 @@ const readingSchema = new mongoose.Schema({
   time_period: {
     type: String,
     required: true,
-    // enum: [
-    //   "Before breakfast",
-    //   "After breakfast",
-    //   "Before lunch",
-    //   "After lunch",
-    //   "Before dinner",
-    //   "After dinner",
-    //   "Before sleep",
-    //   "Random"
-    // ],
+    enum: [
+      "Before breakfast",
+      "After breakfast",
+      "Before lunch",
+      "After lunch",
+      "Before dinner",
+      "After dinner",
+      "Before sleep",
+      "Random"
+    ],
   },
   datetime: {
     type: Date,
