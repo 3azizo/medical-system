@@ -82,7 +82,7 @@ export const login = async (req, res) => {
   }
 };
 export const updateProfile = async (req, res) => {
-  const { name, email, password, phone, location } = req.body;
+  const { name, email, password, phone, address } = req.body;
 
   try {
     const user = await User.findById(req.user.id);
@@ -105,9 +105,9 @@ export const updateProfile = async (req, res) => {
       updatedFields.phone = phone;
     }
 
-    if (location !== undefined) {
-      user.location = location;
-      updatedFields.location = location;
+    if (address !== undefined) {
+      user.address = address;
+      updatedFields.address = address;
     }
 
     if (password !== undefined && password !== '') {
@@ -132,8 +132,8 @@ export const updateProfile = async (req, res) => {
     };
 
     // إضافة location للاستجابة فقط إذا تم تحديثها أو موجودة أصلاً
-    if (location !== undefined || user.location) {
-      responseData.user.location = user.location;
+    if (address !== undefined || user.address) {
+      responseData.user.address = user.address;
     }
 
     res.status(200).json(responseData);

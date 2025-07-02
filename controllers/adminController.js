@@ -68,15 +68,15 @@ export const deleteLab = async (req, res) => {
    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: 'Invalid ID format' });
     }
-     if (lab.userId) {
-      await User.findByIdAndDelete(lab.userId);
-    }
-  
+    
   try {
     const lab = await Lab.findById(id);
     await lab.deleteOne();
     if (!lab) {
       return res.status(404).json({ msg: 'Lab not found' });
+    }
+     if (lab.userId) {
+      await User.findByIdAndDelete(lab.userId);
     }
     res.status(200).json({ msg: 'Lab deleted successfully' });
   } catch (err) {
