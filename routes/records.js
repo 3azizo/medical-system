@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
 });
 router.get('/', async (req, res) => {
   try {
-    const records = await Records.find({ isActive: true });
+    const records = await Records.find({ user: req.user.id })
     res.json({ records });
   } catch (err) {
     console.error(err);
