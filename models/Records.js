@@ -21,9 +21,11 @@ const readingSchema = new mongoose.Schema({
       "Random"
     ],
   },
-  datetime: {
+  date: {
     type: String,
-    required: true,
+  },
+  time: {
+    type: String,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,

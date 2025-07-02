@@ -10,13 +10,11 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const { blood_glucose, time_period, date, time } = req.body;
-
-    const datetime = new Date(`${date}T${time}`)|| new Date();
-
     const records = new Records({
       blood_glucose,
       time_period,
-      datetime,
+      date,
+      time,
       user: req.user.id,
     });
 
