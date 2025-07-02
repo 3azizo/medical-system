@@ -41,7 +41,7 @@ router.delete("/:id", async (req, res) => {
       if (!record) {
       return res.status(404).json({ error: 'record not found' });
     }
-    record.delete();
+    await record.deleteOne();
     res.json({ message: 'record deleted successfully' });
   } catch (err) {
     console.error(err);
