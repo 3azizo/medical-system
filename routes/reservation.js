@@ -9,7 +9,7 @@ router.post('/', protect, checkRole('user'), createReservation);
 // المستخدم يشوف حجوزاته
 router.get('/', protect, checkRole('user'), getReservation);    
 
-// المعمل يشوف الحجوزات
+// المعمل يشوف الحجوزات medical_lab
 router.get('/lab', protect, checkRole('medical_lab'), getLabReservations);
 //   put /api/reservations/:id
 router.put('/:id/status', protect, checkRole('medical_lab'), updateReservationStatus);

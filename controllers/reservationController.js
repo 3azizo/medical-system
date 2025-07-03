@@ -1,8 +1,9 @@
 import Reservation from "../models/Reservation.js";
+import Lab from "../models/Lab.js";
 import sendNotification from "../utils/sendNotification.js";
 
 export const createReservation = async (req, res) => {
-  const {name,time, labId, service, date} = req.body;
+  const {name,time, labId, service, date,note} = req.body;
   if (!labId || !date) {
     return res.status(400).json({ error: 'labId and date are required' });
   }
@@ -14,13 +15,15 @@ export const createReservation = async (req, res) => {
       date,
       name,
       time,
+      note
     });
-
+    
     await reservation.save();
+    // console.log(reservation);
 
     await sendNotification(
       labId,
-      `طلب حجز جديد من مستخدم لاختبار: ${testType}`
+      `طلب حجز جديد من مستخدم لاختبار: ${service} في ${date} الساعة ${time}`
     );
 
     res.status(201).json({ msg: 'Reservation created', reservation });
@@ -41,8 +44,10 @@ export const getReservation = async (req, res) => {
 }
 export const getLabReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find({ lab: req.user.id })
-      .populate('user', 'name email')
+    const lab = await Lab.findOne({ userId: req.user._id });
+    if (!lab) return res.status(404).json({ error: 'Lab not found' });
+    
+    const reservations = await Reservation.find({lab:lab._id })
       .sort({ createdAt: -1 });
 
     res.status(200).json(reservations);
