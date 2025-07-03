@@ -11,8 +11,8 @@ router.get('/', protect, checkRole('user'), getReservation);
 
 // المعمل يشوف الحجوزات medical_lab
 router.get('/lab', protect, checkRole('medical_lab'), getLabReservations);
-//   put /api/reservations/:id
-router.put('/:id/status', protect, checkRole('medical_lab'), updateReservationStatus);
+//   put /api/reservation/:id
+router.put('/:id', protect, checkRole('medical_lab'), updateReservationStatus);
 router.post('/:id/result', protect, checkRole('medical_lab'), addResultFile);
 
 export default router;

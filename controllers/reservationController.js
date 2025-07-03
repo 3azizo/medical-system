@@ -3,7 +3,7 @@ import Lab from "../models/Lab.js";
 import sendNotification from "../utils/sendNotification.js";
 
 export const createReservation = async (req, res) => {
-  const {name,time, labId, service, date,note} = req.body;
+  const {name,time, labId, service, date,userNote} = req.body;
   if (!labId || !date) {
     return res.status(400).json({ error: 'labId and date are required' });
   }
@@ -15,7 +15,7 @@ export const createReservation = async (req, res) => {
       date,
       name,
       time,
-      note
+      userNote,
     });
     
     await reservation.save();
@@ -57,21 +57,27 @@ export const getLabReservations = async (req, res) => {
 };
 
 export const updateReservationStatus = async (req, res) => {
-  const { status } = req.body;
+  const { status,labNote} = req.body;
+   const lab = await Lab.findOne({ userId: req.user._id });
+    if (!lab) return res.status(404).json({ error: 'Lab not found' });
 
   try {
     const reservation = await Reservation.findById(req.params.id);
     if (!reservation) return res.status(404).json({ msg: 'Not found' });
 
-    if (reservation.lab.toString() !== req.user.id)
+    if (reservation.status !== 'pending') 
+      return res.status(400).json({ msg: 'Reservation already processed' });
+    if (reservation.lab.toString() !== lab._id.toString()) 
       return res.status(403).json({ msg: 'Access denied' });
 
+    console.log(reservation.lab.toString(), lab._id.toString());
     reservation.status = status;
+    reservation.labNote = labNote;
     await reservation.save();
 
     await sendNotification(
       reservation.user,
-      `تم ${status === 'accepted' ? 'قبول' : 'رفض'} حجزك لاختبار ${reservation.testType}`
+      `تم ${status === 'accepted' ? 'قبول' : 'رفض'} حجزك لاختبار ${reservation.service}`
     );
 
     res.status(200).json({ msg: 'Updated successfully', reservation });
@@ -79,6 +85,8 @@ export const updateReservationStatus = async (req, res) => {
     res.status(500).json({ msg: 'Server Error' });
   }
 };
+
+
 export const addResultFile= async (req,res)=>{
   res.status(200).json({ msg: 'implemention soon' });
 }    
