@@ -44,7 +44,7 @@ export const getReservation = async (req, res) => {
 }
 export const getLabReservations = async (req, res) => {
   try {
-    const lab = await Lab.findOne({ userId: req.user._id });
+    const lab = await Lab.findOne({ userId: req.user.id });
     if (!lab) return res.status(404).json({ error: 'Lab not found' });
     
     const reservations = await Reservation.find({lab:lab._id })
@@ -58,7 +58,7 @@ export const getLabReservations = async (req, res) => {
 
 export const updateReservationStatus = async (req, res) => {
   const { status,labNote} = req.body;
-   const lab = await Lab.findOne({ userId: req.user._id });
+   const lab = await Lab.findOne({ userId: req.user.id });
     if (!lab) return res.status(404).json({ error: 'Lab not found' });
 
   try {
@@ -89,7 +89,7 @@ export const updateReservationStatus = async (req, res) => {
 
 export const uploadLabResult = async (req, res) => {
   try {
-       const lab = await Lab.findOne({ userId: req.user._id });
+       const lab = await Lab.findOne({ userId: req.user.id });
     if (!lab) return res.status(404).json({ error: 'Lab not found' });
 
     const reservation = await Reservation.findById(req.params.id);

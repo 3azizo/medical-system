@@ -34,7 +34,7 @@ const reservationSchema = new mongoose.Schema({
     enum: ['pending', 'accepted', 'rejected'],
     default: 'pending',
   },
-    userNot: { type: String, default: '' },  
+    userNote: { type: String, default: '' },  
     labNote: { type: String, default: '' },  
   createdAt: {
     type: Date,
