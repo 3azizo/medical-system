@@ -87,6 +87,44 @@ export const updateReservationStatus = async (req, res) => {
 };
 
 
-export const addResultFile= async (req,res)=>{
-  res.status(200).json({ msg: 'implemention soon' });
-}    
+export const uploadLabResult = async (req, res) => {
+  try {
+       const lab = await Lab.findOne({ userId: req.user._id });
+    if (!lab) return res.status(404).json({ error: 'Lab not found' });
+
+    const reservation = await Reservation.findById(req.params.id);
+    if (!reservation) return res.status(404).json({ msg: 'Reservation not found' });
+    //accepted
+    if (reservation.status !== 'accepted') {
+      return res.status(400).json({ msg: 'Reservation not accepted yet' });
+    }
+    if (reservation.lab.toString() !== lab._id.toString()) 
+      return res.status(403).json({ msg: 'Access denied' });
+
+    reservation.pdfUrl = req.file.path;
+    reservation.pdfPublicId = req.file.filename;
+    await reservation.save();
+
+    res.status(200).json({ msg: 'Lab result uploaded', pdfUrl: reservation.pdfUrl });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server Error' });
+  }
+};
+export const getLabResult = async (req, res) => {
+  try {
+    const reservation = await Reservation.findById(req.params.id);
+
+    if (!reservation || !reservation.pdfUrl) {
+      return res.status(404).json({ msg: 'No lab result found' });
+    }
+
+    if (reservation.user.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'Not authorized' });
+    }
+
+    res.status(200).json({ pdfUrl: reservation.pdfUrl });
+  } catch (err) {
+    res.status(500).json({ msg: 'Server Error' });
+  }
+};

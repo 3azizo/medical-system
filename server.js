@@ -38,6 +38,9 @@ app.use('/api/labs', labRoutes);
 // Admin routes
 import adminRoutes from './routes/admin.js';
 app.use('/api/admin', adminRoutes);
+// Upload PDF route
+import uploadPdfRoute from './routes/uploadPdf.js';
+app.use('/', uploadPdfRoute);
 // wellcome message in root rout
 app.get("/",(req,res)=>{
   res.send(`<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> 

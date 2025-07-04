@@ -27,6 +27,8 @@ const reservationSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  pdfUrl: String,
+  pdfPublicId: String,
   status: {
     type: String,
     enum: ['pending', 'accepted', 'rejected'],
