@@ -19,12 +19,10 @@ export const createReservation = async (req, res) => {
     });
     
     await reservation.save();
-    // console.log(reservation);
     await sendNotification(
       labId,
       `طلب حجز جديد من مستخدم لاختبار: ${service} في ${date} الساعة ${time}`
     );
-
     res.status(201).json({ msg: 'Reservation created', reservation });
   } catch (err) {
     res.status(500).json({ msg: 'Server Error' });
@@ -57,7 +55,6 @@ export const getLabReservations = async (req, res) => {
   try {
     const lab = await Lab.findOne({ userId: req.user.id });
     if (!lab) return res.status(404).json({ error: 'Lab not found' });
-    
     const reservations = await Reservation.find({lab:lab._id })
       .sort({ createdAt: -1 });
 
@@ -105,7 +102,6 @@ export const uploadLabResult = async (req, res) => {
 
     const reservation = await Reservation.findById(req.params.id);
     if (!reservation) return res.status(404).json({ msg: 'Reservation not found' });
-    //accepted
     if (reservation.status !== 'accepted') {
       return res.status(400).json({ msg: 'Reservation not accepted yet' });
     }

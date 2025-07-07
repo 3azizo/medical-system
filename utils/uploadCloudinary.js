@@ -2,7 +2,6 @@ import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from '../config/cloudinary.config.js';
 
-// 🟢 رفع صور فقط
 export const uploadImage = multer({
   storage: new CloudinaryStorage({
     cloudinary,
@@ -13,8 +12,6 @@ export const uploadImage = multer({
     },
   }),
 });
-
-// 🟣 رفع PDF فقط
 export const uploadPDF = multer({
   storage: new CloudinaryStorage({
     cloudinary,

@@ -6,24 +6,19 @@ const router = express.Router();
 
 // Middleware to protect routes
  router.use(protect);
-// 
+
 router.post("/", async (req, res) => {
   try {
     const { blood_glucose, time_period, date, time } = req.body;
-    const records = new Records({
-      blood_glucose,
-      time_period,
-      date,
-      time,
-      user: req.user.id,
-    });
+    const records = new Records({blood_glucose,time_period,date,time,user: req.user.id});
     await records.save();
-    console.log(records);
-    res.status(201).json({ message: "Reading saved", data: records });
+  
+    res.status(201).json({ message: "record saved", data: records });
   } catch (err) {
     res.status(500).json({ error: "Server error", details: err.message });
   }
 });
+
 router.get('/', async (req, res) => {
   try {
     const records = await Records.find({ user: req.user.id })
@@ -33,14 +28,12 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-
     const record = await Records.findById(id);
-      if (!record) {
-      return res.status(404).json({ error: 'record not found' });
-    }
+    if (!record)return res.status(404).json({ error: 'record not found' });
     await record.deleteOne();
     res.json({ message: 'record deleted successfully' });
   } catch (err) {

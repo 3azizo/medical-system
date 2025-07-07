@@ -82,7 +82,6 @@ export const deleteLab = async (req, res) => {
     if (lab.userId) {
       await User.findByIdAndDelete(lab.userId);
     }
-
     // Delete the lab
     await lab.deleteOne();
 
