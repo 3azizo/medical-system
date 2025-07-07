@@ -23,9 +23,13 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    bloodType: { type: String },
+    gender: { type: String, enum: ['male', 'female', 'other'] },
+    weight: { type: String },
+    profileImage: { type: String }, 
     age:{
       type:String,
-            required: false,
+      required: false,
     },
     role: {
       type: String,

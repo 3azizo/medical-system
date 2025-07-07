@@ -20,6 +20,7 @@ Medical System Graduation project backend (Node.js - Express - MongoDB)
 ├── models/              # MongoDB models
 ├── routes/              # API route handlers
 ├── middleware/          # Auth & role checks
+├── utils/               # helper functions
 ├── config/              # DB connection setup
 ├── server.js            # App entry point
 ```
@@ -45,12 +46,13 @@ PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
 ```
++ cloudinary env 
 
 4. Run the server:
 ```bash
 npm start
 ```
-## 📌 API Endpoints 
+<!-- ## 📌 API Endpoints 
 
 ### Auth
 - `POST /api/auth/register` – Register user/lab
@@ -82,7 +84,7 @@ npm start
 ### Sharing
 - `POST /api/results/:id/share` – Share result
 
----
+--- -->
 
 ## 🛡️ Authorization
 All protected routes require:

@@ -1,6 +1,8 @@
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import Lab from '../models/Lab.js';
+
 
 export const register = async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -75,82 +77,106 @@ export const login = async (req, res) => {
     console.log("----------token------");
     console.log(token);
 
-    res.status(200).json({ token, user: { id: user._id, name: user.name, role: user.role } });
+    res.status(200).json({ token, user:user });
   } catch (err) {
     console.log("----------error------")
     res.status(500).json({ msg: 'Server Error' });
   }
 };
 export const updateProfile = async (req, res) => {
-  const { name, email, password, phone, address } = req.body;
-
   try {
-    const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ msg: 'User not found' });
+    const userRole = req.user.role;
+    const userId = req.user.id;
 
-    const updatedFields = {};
+    let updatedData = {};
+    let updated;
 
-    if (name !== undefined) {
-      user.name = name;
-      updatedFields.name = name;
-    }
-    
-    if (email !== undefined) {
-      user.email = email;
-      updatedFields.email = email;
-    }
-    
-    if (phone !== undefined) {
-      user.phone = phone;
-      updatedFields.phone = phone;
-    }
+    if (userRole === 'user') {
+      const {
+        name,
+        email,
+        phone,
+        address,
+        gender,
+        bloodType,
+        weight,
+        password
+      } = req.body;
 
-    if (address !== undefined) {
-      user.address = address;
-      updatedFields.address = address;
-    }
+      if (name) updatedData.name = name;
+      if (email) updatedData.email = email;
+      if (phone) updatedData.phone = phone;
+      if (address) updatedData.address = address;
+      if (gender) updatedData.gender = gender;
+      if (bloodType) updatedData.bloodType = bloodType;
+      if (weight) updatedData.weight = weight;
 
-    if (password !== undefined && password !== '') {
-      const hashed = await bcrypt.hash(password, 10);
-      user.password = hashed;
-      updatedFields.password = 'updated';
-    }
-
-    await user.save();
-
-    // إعداد الاستجابة
-    const responseData = {
-      msg: 'Profile updated successfully',
-      updatedFields: Object.keys(updatedFields),
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
+     
+      if (req.files?.profileImage?.[0]) {
+        updatedData.profileImage = req.files.profileImage[0].path; // Cloudinary URL
       }
-    };
 
-    // إضافة location للاستجابة فقط إذا تم تحديثها أو موجودة أصلاً
-    if (address !== undefined || user.address) {
-      responseData.user.address = user.address;
+      // كلمة السر
+      if (password && password !== '') {
+        const hashed = await bcrypt.hash(password, 10);
+        updatedData.password = hashed;
+      }
+
+      updated = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+
+    } else if (userRole === 'medical_lab') {
+      const {
+        name,
+        phone,
+        address,
+        workHours,
+        password
+      } = req.body;
+
+      if (name) updatedData.name = name;
+      if (phone) updatedData.phone = phone;
+      if (address) updatedData.address = address;
+      if (workHours) updatedData.workHours = workHours;
+
+      // الصور
+      if (req.files?.profileImage?.[0]) {
+        updatedData.profileImage = req.files.profileImage[0].path;
+      }
+
+      if (req.files?.coverImage?.[0]) {
+        updatedData.coverImage = req.files.coverImage[0].path;
+      }
+
+      // تحديث معمل
+      updated = await Lab.findOneAndUpdate(
+        { userId },
+        updatedData,
+        { new: true }
+      );
+
+      // لو محتاج تحدث باسورد الحساب كمان
+      if (password && password !== '') {
+        const hashed = await bcrypt.hash(password, 10);
+        await User.findByIdAndUpdate(userId, { password: hashed });
+      }
     }
 
-    res.status(200).json(responseData);
+    if (!updated) return res.status(404).json({ msg: 'Account not found' });
+
+    res.status(200).json({
+      message: 'Profile updated successfully',
+      data: updated
+    });
+
   } catch (err) {
     console.error('Update profile error:', err);
-    
-    // معالجة أخطاء محددة
     if (err.code === 11000) {
       return res.status(400).json({ msg: 'Email or phone already exists' });
     }
-    
-    res.status(500).json({ 
-      msg: 'Server Error',
-      ...(process.env.NODE_ENV === 'development' && { error: err.message })
-    });
+    res.status(500).json({ msg: 'Server Error', error: err.message });
   }
 };
+
 export const logout = async (req, res) => {
   res.status(200).json({ msg: 'Logged out successfully. Remove token client-side.' });
 };
