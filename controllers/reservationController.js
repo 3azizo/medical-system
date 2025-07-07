@@ -20,7 +20,6 @@ export const createReservation = async (req, res) => {
     
     await reservation.save();
     // console.log(reservation);
-
     await sendNotification(
       labId,
       `طلب حجز جديد من مستخدم لاختبار: ${service} في ${date} الساعة ${time}`
@@ -38,6 +37,18 @@ export const getReservation = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.status(200).json(reservations);
+  } catch (err) {
+    res.status(500).json({ msg: 'Server Error' });
+  }
+}
+export const deleteReservation = async (req, res) => {
+  try {
+    const reservation= await Reservation.findById(req.params.id);
+     if (reservation.user.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'Not authorized' });
+    }
+    await Reservation.findByIdAndDelete(req.params.id);
+    res.status(200).json({mag:"Reservation deleted successfully"});
   } catch (err) {
     res.status(500).json({ msg: 'Server Error' });
   }
@@ -125,6 +136,30 @@ export const getLabResult = async (req, res) => {
 
     res.status(200).json({ pdfUrl: reservation.pdfUrl });
   } catch (err) {
+    res.status(500).json({ msg: 'Server Error' });
+  }
+};
+export const deleteLabResult = async (req, res) => {
+  try {
+    const reservation = await Reservation.findById(req.params.id);
+
+    if (!reservation || !reservation.pdfUrl) {
+      return res.status(404).json({ msg: 'No lab result found to delete' });
+    }
+
+    if (reservation.user.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'Not authorized' });
+    }
+    //delete the file from cloudinary
+     const result = await cloudinary.uploader.destroy(reservation.pdfPublicId);
+     console.log(result);
+    reservation.pdfUrl = undefined;
+    reservation.pdfPublicId = undefined;
+    await reservation.save();
+
+    res.status(200).json({ msg: 'Lab result deleted successfully' });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ msg: 'Server Error' });
   }
 };
