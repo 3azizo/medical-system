@@ -14,7 +14,6 @@ export const getAllLabs = async (req, res) => {
 export const addLab = async (req, res) => {
   const { name, address, phone } = req.body;
 
-
   if (!name) {
     return res.status(400).json({ error: 'name are required' });
   }
@@ -33,7 +32,8 @@ export const addLab = async (req, res) => {
       password: hashedPassword,
       role: 'medical_lab',
       phone,
-      address
+      address,
+      isVerified: true,
     });
 
     await labUser.save();

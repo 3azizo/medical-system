@@ -24,9 +24,13 @@ export const register = async (req, res) => {
       role,
       otpCode,
       otpExpiresAt,
-      isVerified: false,
+      isVerified: role === 'admin' ? true : false,
     });
     await user.save();
+    if (role === 'admin') {
+      res.status(200).json({msg: 'Admin account created successfully.login to continue'});
+    }
+
     await sendOTPEmail(email, otpCode);
     res.status(201).json({
       msg: 'Registration successful. Please check your email for the OTP.',
@@ -43,7 +47,6 @@ export const verifyOTP = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) return res.status(404).json({ msg: 'account not found ' });
   if (user.isVerified) return res.status(400).json({ msg: 'your account is already verified' });
-
   if (user.otpCode !== otp || user.otpExpiresAt < new Date()) {
     return res.status(400).json({ msg: `Invalid or expired OTP code` }); 
   }
@@ -82,7 +85,6 @@ export const login = async (req, res) => {
 
     res.status(200).json({ token, user:user });
   } catch (err) {
-    console.log("----------error------")
     res.status(500).json({ msg: 'Server Error' });
   }
 };
@@ -94,12 +96,13 @@ export const updateProfile = async (req, res) => {
     let updatedData = {};
     let updated;
 
-    if (userRole === 'user') {
-      const {name,email,phone,address,gender,bloodType,weight,password} = req.body;
+    if (userRole === 'user'||userRole === 'admin') {
+      const {name,email,phone,address,gender,bloodType,weight,password,age} = req.body;
       if (name) updatedData.name = name;
       if (email) updatedData.email = email;
       if (phone) updatedData.phone = phone;
       if (address) updatedData.address = address;
+      if (age) updatedData.age = age;
       if (gender) updatedData.gender = gender;
       if (bloodType) updatedData.bloodType = bloodType;
       if (weight) updatedData.weight = weight
@@ -131,12 +134,13 @@ export const updateProfile = async (req, res) => {
         const hashed = await bcrypt.hash(password, 10);
         await User.findByIdAndUpdate(userId, { password: hashed });
       }
+
     }
 
     if (!updated) return res.status(404).json({ msg: 'Account not found' });
 
     res.status(200).json({
-      message: 'Profile updated successfully',
+      message: 'Profile updated successfully ff',
       data: updated
     });
 
