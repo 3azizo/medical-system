@@ -1,7 +1,7 @@
 import Reservation from "../models/Reservation.js";
 import Lab from "../models/Lab.js";
 import sendNotification from "../utils/sendNotification.js";
-import cloudinary from "../utils/cloudinary.js";
+import cloudinary from "../config/cloudinary.config.js"
 
 export const createReservation = async (req, res) => {
   const {name,time, labId, service, date,userNote} = req.body;
