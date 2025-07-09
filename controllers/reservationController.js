@@ -1,6 +1,7 @@
 import Reservation from "../models/Reservation.js";
 import Lab from "../models/Lab.js";
 import sendNotification from "../utils/sendNotification.js";
+import cloudinary from "../utils/cloudinary.js";
 
 export const createReservation = async (req, res) => {
   const {name,time, labId, service, date,userNote} = req.body;
@@ -147,8 +148,8 @@ export const deleteLabResult = async (req, res) => {
       return res.status(403).json({ msg: 'Not authorized' });
     }
     //delete the file from cloudinary
-     const result = await cloudinary.uploader.destroy(reservation.pdfPublicId);
-     console.log(result);
+    const cloudinaryR = await cloudinary.uploader.destroy(reservation.pdfPublicId);
+    console.log(cloudinaryR);
     reservation.pdfUrl = undefined;
     reservation.pdfPublicId = undefined;
     await reservation.save();
