@@ -10,10 +10,24 @@ export const register = async (req, res) => {
   const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
   const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
   try {
+
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ success: false,message: 'User already exists'});
+
+    if (existingUser && existingUser.isVerified) {
+    return res.status(400).json({ msg: 'Email is already registered and verified' });
     }
+    if (existingUser && !existingUser.isVerified) {
+
+      existingUser.otpCode = otpCode;
+      existingUser.otpExpiresAt = otpExpiresAt;
+      await existingUser.save();
+
+      await sendOTPEmail(email, otpCode);
+
+      return res.status(200).json({
+        msg: 'Your email is already registered but not verified. A new OTP was sent.'
+      });
+  }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -26,6 +40,7 @@ export const register = async (req, res) => {
       otpExpiresAt,
       isVerified: role === 'admin' ? true : false,
     });
+
     await user.save();
     if (role === 'admin') {
       res.status(200).json({msg: 'Admin account created successfully.login to continue'});
